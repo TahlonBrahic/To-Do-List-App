@@ -1,0 +1,14 @@
+{
+  "name": "todo",
+  "version": "1.0.0",
+  "description": "To Do List",
+  "main": "ElectronToDoListApp.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Tahlon Brahic",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^19.0.1"
+  }
+}
