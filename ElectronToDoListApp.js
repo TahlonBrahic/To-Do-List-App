@@ -1,14 +1,27 @@
+// need to package and fix icons...
+
 const electron = require('electron');
 const url = require('url');
 const path = require('path');
+const { contextIsolated } = require('process');
 
-const {app, BrowserWindow, Menu} = electron;
+const {app, BrowserWindow, Menu, ipcMain} = electron;
+
+// SET ENV
+process.env.NODE_ENV = 'development';
 
 let mainWindow;
 let addWindow;
 
 app.on('ready', function(){
-    mainWindow = new BrowserWindow({});
+    // Create new window
+    mainWindow = new BrowserWindow({
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        }
+    });
+    // Load html in window
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'mainWindow.html'),
         protocol:'file:',
@@ -17,18 +30,23 @@ app.on('ready', function(){
 
     // Quit app when closed
     mainWindow.on('closed', function(){
-    app.quit();
+        app.quit();
 });
 
     // Build menu from template
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
+    // Insert menu
     Menu.setApplicationMenu(mainMenu);
 });
 
 
-// Handle create add window
+// Handle add item window
 function createAddWindow(){
     addWindow = new BrowserWindow({
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        },
         width: 300,
         height: 200,
         title:'Add To-Do'
@@ -36,7 +54,7 @@ function createAddWindow(){
     addWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'addWindow.html'),
         protocol:'file:',
-        slashes: true
+        slashes:true
     }));
     // Garbage collection handle
     addWindow.on('closed', function(){
@@ -44,8 +62,15 @@ function createAddWindow(){
     })
 }
 
+// Catch item:add
+ipcMain.on('item:add', function(e, item){
+  mainWindow.webContents.send('item:add', item);
+  addWindow.close();
+});
+
 // // Menu Template
  const mainMenuTemplate = [
+     // Each object is a dropdown item
     {
         label:'File',
         submenu:[
@@ -56,7 +81,10 @@ function createAddWindow(){
                 }
             },
             {
-                label: 'Clear Items'
+                label: 'Clear Items',
+                click(){
+                    mainWindow.webContents.send('item:clear');
+                }
             },
             {
                 label:'Quit',

@@ -4,11 +4,18 @@
   "description": "To Do List",
   "main": "ElectronToDoListApp.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package-linux": "electron-packager . --overwrite --platform=linux --arch=x64 --icon=assets/icons/png/icon.png --prune=true --out=release-builds",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
+    "package-win": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"To-Do List\""
   },
   "author": "Tahlon Brahic",
   "license": "MIT",
   "dependencies": {
     "electron": "^19.0.1"
-  }
+  },
+  "devDependencies": {
+    "electron-packager": "^15.5.1"
+  },
+  "type": "commonjs"
 }
